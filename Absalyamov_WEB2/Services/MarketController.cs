@@ -13,9 +13,10 @@ namespace Absalyamov_WEB2.Controllers
         {
             _context = context;
 
+
         }
 
-        [HttpGet("Get players by id"), Authorize(Roles = "Noob")]
+        [HttpGet("GetPlayersById"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<PlayerCard>> Get(int id)
         {
             var sub = await _context.PlayerCards.FindAsync(id);
@@ -24,20 +25,20 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(sub);
         }
 
-        [HttpGet("Get players by country"), Authorize(Roles = "Noob")]
+        [HttpGet("GetPlayersByCountry"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<PlayerCard>> SuperPuperGet(string countryname)
         {
             var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Country == countryname select new { PlayerCards.Name, PlayerCards.Surname };
             return Ok(sub);
         }
 
-        [HttpGet("Get all players on Market"), Authorize(Roles = "Noob")]
+        [HttpGet("GetAllPlayersOnMarket"), Authorize(Roles = "Noob, Admin")]
         public async Task<ActionResult<List<PlayerCard>>> Get()
         {
             return Ok(await _context.PlayerCards.ToListAsync());
         }
 
-        [HttpPut("Buy player by id"), Authorize(Roles = "Noob")]
+        [HttpPut("BuyPlayerById"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> BuyPlayer(int _CardID)
         {
             UserCardRelationship Relationship = new UserCardRelationship();

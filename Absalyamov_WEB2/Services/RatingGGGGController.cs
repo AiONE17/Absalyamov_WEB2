@@ -6,16 +6,16 @@ namespace Absalyamov_WEB2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RatingController : ControllerBase
+    public class RatingGGGGController : ControllerBase
     {
         private readonly DataContext _context;
-        public RatingController(DataContext context)
+        public RatingGGGGController(DataContext context)
         {
             _context = context;
 
         }
 
-        [HttpGet("Get Rating of my team"), Authorize(Roles = "Noob")]
+        [HttpGet("GetRatingOfMyTeam"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> GetTeamRating()
         {
             int _UserID = GetUserID(User.Identity.Name);
@@ -24,7 +24,7 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(rating);
         }
 
-        [HttpPost("Register my team to rating"), Authorize(Roles = "Noob")]
+        [HttpPost("RegisterMyTeamToRating"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> RegisterTeam()
         {
             Rating Rate = new Rating();
@@ -38,7 +38,7 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(Rate);
         }
 
-        [HttpGet("Get list of registered teams by descending"), Authorize(Roles = "Noob")]
+        [HttpGet("GetListOfRegisteredTeamsByDescending"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> GetTeams()
         {
             var TeamList = from Ratings in _context.Ratings

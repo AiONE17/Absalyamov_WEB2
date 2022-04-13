@@ -17,7 +17,7 @@ namespace Absalyamov_WEB2.Controllers
         }
 
 
-        [HttpGet("Show my players, pleeeeeeaase"), Authorize(Roles = "Noob")]
+        [HttpGet("ShowMyPlayersPleeeeeeaase"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> GetMyPlayers()
         {
             UserCardRelationship Relationship = new UserCardRelationship();
@@ -38,7 +38,7 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(query);
         }
 
-        [HttpGet("Check my balance, pleeeeeeaase"), Authorize(Roles = "Noob")]
+        [HttpGet("CheckMyBalancePleeeeeeaase"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> CheckMyBalance()
         {
             int _UserBalance = GetUserBalance(User.Identity.Name);
