@@ -8,6 +8,6 @@
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public bool Role { get; set; } = false;
-        //public List<PlayerCard> PlayerCards { get; set; }
+        public List<PlayerCard> PlayerCards { get; set; }
     }
 }

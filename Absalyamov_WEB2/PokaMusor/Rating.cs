@@ -6,10 +6,10 @@ namespace Absalyamov_WEB2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RatingGGGGController : ControllerBase
+    public class Rating : ControllerBase
     {
         private readonly DataContext _context;
-        public RatingGGGGController(DataContext context)
+        public Rating(DataContext context)
         {
             _context = context;
 
@@ -27,7 +27,7 @@ namespace Absalyamov_WEB2.Controllers
         [HttpPost("RegisterMyTeamToRating"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> RegisterTeam()
         {
-            Rating Rate = new Rating();
+            Absalyamov_WEB2.Rating Rate = new Absalyamov_WEB2.Rating();
             Rate.Username = User.Identity.Name;
             int _UserID = GetUserID(User.Identity.Name);
             int sum = _context.UserCardRelationships.Where(o => o.UserID == _UserID).Sum(o => o.Pace + o.Shooting + o.Dribling + o.Passing + o.Physical + o.Defending);

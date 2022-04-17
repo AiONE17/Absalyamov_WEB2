@@ -7,10 +7,10 @@ namespace Absalyamov_WEB2.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class AdminController : ControllerBase
+    public class Admin : ControllerBase
     {
         private readonly DataContext _context;
-        public AdminController(DataContext context)
+        public Admin(DataContext context)
         {
             _context = context;
 
@@ -75,7 +75,7 @@ namespace Absalyamov_WEB2.Controllers
         public async Task<ActionResult<List<PlayerCard>>> DeleteRating()
         {
             var query = from Ratings in _context.Ratings select Ratings;
-            foreach (Rating _rating in query)
+            foreach (Absalyamov_WEB2.Rating _rating in query)
             {
                 _context.Ratings.RemoveRange(_rating);
             }

@@ -8,10 +8,10 @@ namespace Absalyamov_WEB2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserInfoController : ControllerBase
+    public class UserInfo : ControllerBase
     {
         private readonly DataContext _context;
-        public UserInfoController(DataContext context)
+        public UserInfo(DataContext context)
         {
             _context = context;
         }

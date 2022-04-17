@@ -6,39 +6,17 @@ namespace Absalyamov_WEB2.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MarketController : ControllerBase
+    public class Market : ControllerBase
     {
         private readonly DataContext _context;
-        public MarketController(DataContext context)
+        public Market(DataContext context)
         {
             _context = context;
 
 
         }
 
-        [HttpGet("GetPlayersById"), Authorize(Roles = "Noob")]
-        public async Task<ActionResult<PlayerCard>> Get(int id)
-        {
-            var sub = await _context.PlayerCards.FindAsync(id);
-            if (sub == null)
-                return BadRequest("Country not found :(");
-            return Ok(sub);
-        }
-
-        [HttpGet("GetPlayersByCountry"), Authorize(Roles = "Noob")]
-        public async Task<ActionResult<PlayerCard>> SuperPuperGet(string countryname)
-        {
-            var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Country == countryname select new { PlayerCards.Name, PlayerCards.Surname };
-            return Ok(sub);
-        }
-
-        [HttpGet("GetAllPlayersOnMarket"), Authorize(Roles = "Noob, Admin")]
-        public async Task<ActionResult<List<PlayerCard>>> Get()
-        {
-            return Ok(await _context.PlayerCards.ToListAsync());
-        }
-
-        [HttpPut("BuyPlayerById"), Authorize(Roles = "Noob")]
+        [HttpPost("BuyPlayerById"), Authorize(Roles = "Noob")]
         public async Task<ActionResult<string>> BuyPlayer(int _CardID)
         {
             UserCardRelationship Relationship = new UserCardRelationship();

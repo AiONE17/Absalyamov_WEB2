@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Absalyamov_WEB2;
 using Absalyamov_WEB2.Data;
 using Microsoft.AspNetCore.Authorization;
+using Absalyamov_WEB2.Services;
 
 namespace Absalyamov_WEB2.Controllers
 {
@@ -17,21 +18,23 @@ namespace Absalyamov_WEB2.Controllers
     public class PlayerCardsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IPlayerCardService _playercardservice;
 
-        public PlayerCardsController(DataContext context)
+        public PlayerCardsController(DataContext context, IPlayerCardService playercardservice)
         {
             _context = context;
+            _playercardservice = playercardservice;
         }
 
         // GET: api/PlayerCards
-        [HttpGet, Authorize(Roles = "Admin")]
+        [HttpGet, Authorize(Roles = "Admin,Noob")]
         public async Task<ActionResult<IEnumerable<PlayerCard>>> GetPlayerCards()
         {
             return await _context.PlayerCards.ToListAsync();
         }
 
         // GET: api/PlayerCards/5
-        [HttpGet("{id}"), Authorize(Roles = "Admin")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Noob")]
         public async Task<ActionResult<PlayerCard>> GetPlayerCard(int id)
         {
             var playerCard = await _context.PlayerCards.FindAsync(id);
@@ -101,6 +104,13 @@ namespace Absalyamov_WEB2.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("GetPlayersByCountry")]
+        public async Task<IActionResult> Get(string countryname)
+        {
+            return Ok(await _playercardservice.GetPlayersByCountry(countryname));
+        }
+
 
         private bool PlayerCardExists(int id)
         {
