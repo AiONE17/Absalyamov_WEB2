@@ -106,9 +106,10 @@ namespace Absalyamov_WEB2.Controllers
         }
 
         [HttpGet("GetPlayersByCountry")]
-        public async Task<IActionResult> Get(string countryname)
+        public async Task<IActionResult> GetPlayersByCountry(string countryname)
         {
-            return Ok(await _playercardservice.GetPlayersByCountry(countryname));
+            var players = await _playercardservice._GetPlayersByCountry(countryname);
+            return Ok(players);
         }
 
 

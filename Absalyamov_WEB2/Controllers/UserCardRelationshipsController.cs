@@ -102,9 +102,105 @@ namespace Absalyamov_WEB2.Controllers
             return NoContent();
         }
 
+        [HttpPost("BuyPlayerById")]
+        public async Task<ActionResult<string>> BuyPlayer(int _CardID)
+        {
+            int _UserID = GetUserID(User.Identity.Name);
+
+            UserCardRelationship Relationship = new UserCardRelationship();
+            Relationship = GenerateSkills(_CardID);
+
+            if (PlayerCardExists(_CardID))
+            {
+                _context.UserCardRelationships.Add(Relationship);
+
+                int UserBalance = GetUserBalance(User.Identity.Name);
+                int CardPrice = GetCardPrice(_CardID);
+                int count = (from UserCardRelationships in _context.UserCardRelationships where _UserID == UserCardRelationships.UserID select _UserID).Count();
+                if ((UserBalance >= CardPrice) && (count < 5))
+                {
+                    int NewBalance = UserBalance - CardPrice;
+                    SetNewUserBalance(_UserID, _CardID, NewBalance);
+                    await _context.SaveChangesAsync();
+                    return Ok(Relationship);
+                }
+                else if ((count >= 5) && (UserBalance >= CardPrice))
+                    return BadRequest("You can buy just 5 players in your team");
+                else
+                    return BadRequest("You haven't enough money to buy this player");
+            }
+            else return BadRequest("There are no players with this id");
+
+        }
+
+        private UserCardRelationship GenerateSkills(int _CardID)
+        {
+            UserCardRelationship _Relationship = new UserCardRelationship();
+            Random rnd = new Random();
+            int _UserID = GetUserID(User.Identity.Name);
+            string CardQuality = GetCardQuality(_CardID);
+            int q;
+            if (CardQuality == "Gold") q = 80;
+            else if (CardQuality == "Silver") q = 65;
+            else if (CardQuality == "Bronze") q = 50;
+            else q = 0;
+
+            _Relationship.UserID = _UserID;
+            _Relationship.CardID = _CardID;
+            _Relationship.Pace = rnd.Next(q, 100);
+            _Relationship.Shooting = rnd.Next(q, 100);
+            _Relationship.Defending = rnd.Next(q, 100);
+            _Relationship.Dribling = rnd.Next(q, 100);
+            _Relationship.Passing = rnd.Next(q, 100);
+            _Relationship.Physical = rnd.Next(q, 100);
+            return (_Relationship);
+        }
+
+        private void SetNewUserBalance(int _UserID, int _CardID, int _NewBalance)
+        {
+            var query = from Users in _context.Users where Users.Id == _UserID select Users;
+            foreach (User user in query)
+            {
+                user.Balance = _NewBalance;
+            }
+        }
+
+        private int GetUserID(string name)
+        {
+            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Id;
+            int id = query.FirstOrDefault();
+            return id;
+        }
+
+        private int GetUserBalance(string name)
+        {
+            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Balance;
+            int _Balance = query.FirstOrDefault();
+            return _Balance;
+        }
+
+        private int GetCardPrice(int CardID)
+        {
+            IQueryable<int> query = from PlayerCard in _context.PlayerCards where PlayerCard.Id == CardID select PlayerCard.Price;
+            int _Price = query.FirstOrDefault();
+            return _Price;
+        }
+        private string GetCardQuality(int CardID)
+        {
+            IQueryable<string> query = from PlayerCard in _context.PlayerCards where PlayerCard.Id == CardID select PlayerCard.Quality;
+            string _Quality = query.First();
+            return _Quality;
+        }
+
         private bool UserCardRelationshipExists(int id)
         {
             return _context.UserCardRelationships.Any(e => e.Id == id);
         }
+
+        private bool PlayerCardExists(int id)
+        {
+            return _context.PlayerCards.Any(e => e.Id == id);
+        }
+
     }
 }

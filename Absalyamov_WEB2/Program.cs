@@ -1,5 +1,6 @@
 global using Absalyamov_WEB2.Data;
 global using Microsoft.EntityFrameworkCore;
+using Absalyamov_WEB2.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -9,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddScoped<IPlayerCardService, PlayerCardService>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(options =>
 {
