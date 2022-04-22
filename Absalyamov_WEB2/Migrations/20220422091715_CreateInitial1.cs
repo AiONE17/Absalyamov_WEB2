@@ -5,23 +5,45 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Absalyamov_WEB2.Migrations
 {
-    public partial class CreateInitial : Migration
+    public partial class CreateInitial1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserCardRelationships",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                    UserID = table.Column<int>(type: "int", nullable: false),
+                    CardID = table.Column<int>(type: "int", nullable: false),
+                    Pace = table.Column<int>(type: "int", nullable: false),
+                    Shooting = table.Column<int>(type: "int", nullable: false),
+                    Passing = table.Column<int>(type: "int", nullable: false),
+                    Dribling = table.Column<int>(type: "int", nullable: false),
+                    Defending = table.Column<int>(type: "int", nullable: false),
+                    Physical = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.id);
+                    table.PrimaryKey("PK_UserCardRelationships", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Balance = table.Column<int>(type: "int", nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Role = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -33,7 +55,9 @@ namespace Absalyamov_WEB2.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    Quality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -42,8 +66,7 @@ namespace Absalyamov_WEB2.Migrations
                         name: "FK_PlayerCards_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -56,6 +79,9 @@ namespace Absalyamov_WEB2.Migrations
         {
             migrationBuilder.DropTable(
                 name: "PlayerCards");
+
+            migrationBuilder.DropTable(
+                name: "UserCardRelationships");
 
             migrationBuilder.DropTable(
                 name: "Users");

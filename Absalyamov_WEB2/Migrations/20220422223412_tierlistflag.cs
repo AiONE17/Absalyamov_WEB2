@@ -4,17 +4,12 @@
 
 namespace Absalyamov_WEB2.Migrations
 {
-    public partial class CreateInitial2 : Migration
+    public partial class tierlistflag : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "id",
-                table: "Users",
-                newName: "Id");
-
             migrationBuilder.AddColumn<bool>(
-                name: "Role",
+                name: "RegisteredToTierList",
                 table: "Users",
                 type: "bit",
                 nullable: false,
@@ -24,13 +19,8 @@ namespace Absalyamov_WEB2.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Role",
+                name: "RegisteredToTierList",
                 table: "Users");
-
-            migrationBuilder.RenameColumn(
-                name: "Id",
-                table: "Users",
-                newName: "id");
         }
     }
 }

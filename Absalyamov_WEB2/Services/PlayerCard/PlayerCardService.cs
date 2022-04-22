@@ -15,6 +15,21 @@ namespace Absalyamov_WEB2.Services
             var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Country == countryname select PlayerCards;
             return sub;
         }
+        public async Task<IQueryable<PlayerCard>> _GetPlayersByName(string name)
+        {
+            var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Name == name select PlayerCards;
+            return sub;
+        }
+        public async Task<IQueryable<PlayerCard>> _GetPlayersBySurname(string surname)
+        {
+            var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Surname == surname select PlayerCards;
+            return sub;
+        }
+        public async Task<IQueryable<PlayerCard>> _GetPlayersByQuality(string quality)
+        {
+            var sub = from PlayerCards in _context.PlayerCards where PlayerCards.Quality == quality select PlayerCards;
+            return sub;
+        }
 
     }
 }

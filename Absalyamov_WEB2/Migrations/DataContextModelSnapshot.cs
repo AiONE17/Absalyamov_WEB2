@@ -59,26 +59,6 @@ namespace Absalyamov_WEB2.Migrations
                     b.ToTable("PlayerCards");
                 });
 
-            modelBuilder.Entity("Absalyamov_WEB2.Rating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<float>("Rateofteam")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Ratings");
-                });
-
             modelBuilder.Entity("Absalyamov_WEB2.User", b =>
                 {
                     b.Property<int>("Id")
@@ -97,6 +77,9 @@ namespace Absalyamov_WEB2.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<bool>("RegisteredToTierList")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("Role")
                         .HasColumnType("bit");

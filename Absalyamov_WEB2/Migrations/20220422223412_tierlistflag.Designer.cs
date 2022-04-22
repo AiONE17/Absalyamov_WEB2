@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Absalyamov_WEB2.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220408114518_CreateInitial5")]
-    partial class CreateInitial5
+    [Migration("20220422223412_tierlistflag")]
+    partial class tierlistflag
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,10 @@ namespace Absalyamov_WEB2.Migrations
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
+
+                    b.Property<string>("Quality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -76,6 +80,9 @@ namespace Absalyamov_WEB2.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<bool>("RegisteredToTierList")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("Role")
                         .HasColumnType("bit");
 
@@ -97,6 +104,24 @@ namespace Absalyamov_WEB2.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CardID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Defending")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Dribling")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Pace")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Passing")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Physical")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Shooting")
                         .HasColumnType("int");
 
                     b.Property<int>("UserID")

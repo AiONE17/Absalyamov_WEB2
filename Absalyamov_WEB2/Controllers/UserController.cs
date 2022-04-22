@@ -71,17 +71,6 @@ namespace Absalyamov_WEB2.Controllers
             return Ok("Cards are deleted");
         }
 
-        [HttpDelete("ClearRating"), Authorize(Roles = "Admin")]
-        public async Task<ActionResult<List<PlayerCard>>> DeleteRating()
-        {
-            var query = from Ratings in _context.Ratings select Ratings;
-            foreach (Absalyamov_WEB2.Rating _rating in query)
-            {
-                _context.Ratings.RemoveRange(_rating);
-            }
-            await _context.SaveChangesAsync();
-            return Ok("Rating is deleted");
-        }
 
         [HttpPut("SetAllPlayersBalance"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<PlayerCard>>> Setallbalance(int newbalance)
@@ -106,6 +95,25 @@ namespace Absalyamov_WEB2.Controllers
             }
             await _context.SaveChangesAsync();
             return Ok(await _context.Users.ToListAsync());
+        }
+
+        [HttpPut("RegisterToTierList"), Authorize(Roles = "Noob")]
+        public async Task<IActionResult> RegisterToTierList()
+        {
+            int id = GetUserID(User.Identity.Name);    
+            var query = from Users in _context.Users where Users.Id == id select Users;
+            foreach (User user in query)
+            {
+                user.RegisteredToTierList = true;
+            }
+            await _context.SaveChangesAsync();
+            return Ok(await _context.Users.ToListAsync());
+        }
+        private int GetUserID(string name)
+        {
+            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Id;
+            int id = query.FirstOrDefault();
+            return id;
         }
     }
 }

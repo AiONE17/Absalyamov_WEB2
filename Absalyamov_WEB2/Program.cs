@@ -10,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<IPlayerCardService, PlayerCardService>();
+builder.Services.AddScoped<IUserService, User>();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(options =>
 {

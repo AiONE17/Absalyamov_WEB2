@@ -10,6 +10,7 @@ using Absalyamov_WEB2;
 using Absalyamov_WEB2.Data;
 using Microsoft.AspNetCore.Authorization;
 using Absalyamov_WEB2.Services;
+using Absalyamov_WEB2.Dto;
 
 namespace Absalyamov_WEB2.Controllers
 {
@@ -18,9 +19,9 @@ namespace Absalyamov_WEB2.Controllers
     public class PlayerCardsController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IPlayerCardService _playercardservice;
+        private readonly IUserService _playercardservice;
 
-        public PlayerCardsController(DataContext context, IPlayerCardService playercardservice)
+        public PlayerCardsController(DataContext context, IUserService playercardservice)
         {
             _context = context;
             _playercardservice = playercardservice;
@@ -80,13 +81,26 @@ namespace Absalyamov_WEB2.Controllers
 
         // POST: api/PlayerCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize(Roles = "Admin")]
-        public async Task<ActionResult<PlayerCard>> PostPlayerCard(PlayerCard playerCard)
+        [HttpPost]
+        public async Task<ActionResult<PlayerCard>> PostPlayerCard(PlayerCardDto request)
         {
-            _context.PlayerCards.Add(playerCard);
+            PlayerCard playercard = new PlayerCard();
+            playercard.Surname = request.Surname;
+            playercard.Name = request.Name;
+            playercard.Country = request.Country;
+            playercard.Quality = request.Quality;
+            if (request.Quality == "Golden")
+                playercard.Price = 3000;
+            else if (request.Quality == "Silver")
+                playercard.Price = 1000;
+            else if (playercard.Quality == "Bronze")
+                playercard.Price = 500;
+            else return BadRequest("Data isn't correct");
+
+            _context.PlayerCards.Add(playercard);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPlayerCard", new { id = playerCard.Id }, playerCard);
+            return Ok(_context.PlayerCards);
         }
 
         // DELETE: api/PlayerCards/5
@@ -112,6 +126,26 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(players);
         }
 
+        [HttpGet("GetPlayersByName")]
+        public async Task<IActionResult> GetPlayersByName(string name)
+        {
+            var players = await _playercardservice._GetPlayersByName(name);
+            return Ok(players);
+        }
+
+        [HttpGet("GetPlayersBySurname")]
+        public async Task<IActionResult> GetPlayersBySurname(string surname)
+        {
+            var players = await _playercardservice._GetPlayersBySurname(surname);
+            return Ok(players);
+        }
+
+        [HttpGet("GetPlayersByQuality")]
+        public async Task<IActionResult> GetPlayersByQuality(string quality)
+        {
+            var players = await _playercardservice._GetPlayersByQuality(quality);
+            return Ok(players);
+        }
 
         private bool PlayerCardExists(int id)
         {

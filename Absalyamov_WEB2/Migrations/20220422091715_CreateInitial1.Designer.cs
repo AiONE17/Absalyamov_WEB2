@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Absalyamov_WEB2.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220409211014_CreateInitial7")]
-    partial class CreateInitial7
+    [Migration("20220422091715_CreateInitial1")]
+    partial class CreateInitial1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,10 @@ namespace Absalyamov_WEB2.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<string>("Quality")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -55,26 +59,6 @@ namespace Absalyamov_WEB2.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PlayerCards");
-                });
-
-            modelBuilder.Entity("Absalyamov_WEB2.Rating", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<float>("Rateofteam")
-                        .HasColumnType("real");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Ratings");
                 });
 
             modelBuilder.Entity("Absalyamov_WEB2.User", b =>
