@@ -9,7 +9,5 @@
         public byte[] PasswordSalt { get; set; }
         public bool Role { get; set; } = false;
         public bool RegisteredToTierList { get; set; } = false;
-        public List<PlayerCard> PlayerCards { get; set; }
-
     }
 }

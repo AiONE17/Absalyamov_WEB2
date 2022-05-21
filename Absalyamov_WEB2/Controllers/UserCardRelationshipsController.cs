@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Absalyamov_WEB2;
 using Absalyamov_WEB2.Data;
+using Microsoft.AspNetCore.Authorization;
+using Absalyamov_WEB2.Services.UserCardRelationships;
 
 namespace Absalyamov_WEB2.Controllers
 {
@@ -16,22 +18,24 @@ namespace Absalyamov_WEB2.Controllers
     public class UserCardRelationshipsController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IUserCardRelationshipsService _userCardRelationshipsService;
 
-        public UserCardRelationshipsController(DataContext context)
+        public UserCardRelationshipsController(DataContext context, IUserCardRelationshipsService userCardRelationshipsService)
         {
             _context = context;
+            _userCardRelationshipsService = userCardRelationshipsService;
 
         }
 
         // GET: api/UserCardRelationships
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<UserCardRelationship>>> GetUserCardRelationships()
         {
             return await _context.UserCardRelationships.ToListAsync();
         }
 
         // GET: api/UserCardRelationships/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserCardRelationship>> GetUserCardRelationship(int id)
         {
             var userCardRelationship = await _context.UserCardRelationships.FindAsync(id);
@@ -46,7 +50,7 @@ namespace Absalyamov_WEB2.Controllers
 
         // PUT: api/UserCardRelationships/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutUserCardRelationship(int id, UserCardRelationship userCardRelationship)
         {
             if (id != userCardRelationship.Id)
@@ -77,7 +81,7 @@ namespace Absalyamov_WEB2.Controllers
 
         // POST: api/UserCardRelationships
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserCardRelationship>> PostUserCardRelationship(UserCardRelationship userCardRelationship)
         {
             _context.UserCardRelationships.Add(userCardRelationship);
@@ -87,7 +91,7 @@ namespace Absalyamov_WEB2.Controllers
         }
 
         // DELETE: api/UserCardRelationships/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUserCardRelationship(int id)
         {
             var userCardRelationship = await _context.UserCardRelationships.FindAsync(id);
@@ -102,10 +106,10 @@ namespace Absalyamov_WEB2.Controllers
             return NoContent();
         }
 
-        [HttpPost("BuyPlayerById")]
+        [HttpPost("BuyPlayerById"), Authorize(Roles = "Admin,Noob")]
         public async Task<ActionResult<string>> BuyPlayer(int _CardID)
         {
-            int _UserID = GetUserID(User.Identity.Name);
+            int _UserID = _userCardRelationshipsService.GetUserID(User.Identity.Name);
 
             UserCardRelationship Relationship = new UserCardRelationship();
             Relationship = GenerateSkills(_CardID);
@@ -114,13 +118,13 @@ namespace Absalyamov_WEB2.Controllers
             {
                 _context.UserCardRelationships.Add(Relationship);
 
-                int UserBalance = GetUserBalance(User.Identity.Name);
-                int CardPrice = GetCardPrice(_CardID);
+                int UserBalance = _userCardRelationshipsService.GetUserBalance(User.Identity.Name);
+                int CardPrice = _userCardRelationshipsService.GetCardPrice(_CardID);
                 int count = (from UserCardRelationships in _context.UserCardRelationships where _UserID == UserCardRelationships.UserID select _UserID).Count();
                 if ((UserBalance >= CardPrice) && (count < 5))
                 {
                     int NewBalance = UserBalance - CardPrice;
-                    SetNewUserBalance(_UserID, _CardID, NewBalance);
+                    _userCardRelationshipsService.SetNewUserBalance(_UserID, _CardID, NewBalance);
                     await _context.SaveChangesAsync();
                     return Ok(Relationship);
                 }
@@ -133,12 +137,35 @@ namespace Absalyamov_WEB2.Controllers
 
         }
 
+        [HttpGet("ShowMyPlayers"), Authorize(Roles = "Noob,Admin")]
+        public async Task<ActionResult<string>> GetMyPlayers()
+        {
+            UserCardRelationship Relationship = new UserCardRelationship();
+            Random rnd = new Random();
+            int _UserID = _userCardRelationshipsService.GetUserID(User.Identity.Name);
+
+            var query = _userCardRelationshipsService._ShowMyPlayers(_UserID);
+            return Ok(query);
+        }
+
+        [HttpGet("GetRatingOfMyTeam"), Authorize(Roles = "Noob, Admin")]
+        public async Task<ActionResult<string>> GetTeamRating()
+        {
+            int _UserID = _userCardRelationshipsService.GetUserID(User.Identity.Name);
+            return Ok(_userCardRelationshipsService.GetTeamRating(_UserID));
+        }
+
+        [HttpGet("GetTierList"), Authorize(Roles = "Noob, Admin")]
+        public async Task<ActionResult<string>> GetTierList()
+        {
+            return Ok(_userCardRelationshipsService._GetTierList());
+        }
         private UserCardRelationship GenerateSkills(int _CardID)
         {
             UserCardRelationship _Relationship = new UserCardRelationship();
             Random rnd = new Random();
-            int _UserID = GetUserID(User.Identity.Name);
-            string CardQuality = GetCardQuality(_CardID);
+            int _UserID = _userCardRelationshipsService.GetUserID(User.Identity.Name);
+            string CardQuality = _userCardRelationshipsService.GetCardQuality(_CardID);
             int q;
             if (CardQuality == "Gold") q = 80;
             else if (CardQuality == "Silver") q = 65;
@@ -146,7 +173,7 @@ namespace Absalyamov_WEB2.Controllers
             else q = 0;
 
             _Relationship.UserID = _UserID;
-            _Relationship.CardID = _CardID;
+            _Relationship.PlayerCardID = _CardID;
             _Relationship.Pace = rnd.Next(q, 100);
             _Relationship.Shooting = rnd.Next(q, 100);
             _Relationship.Defending = rnd.Next(q, 100);
@@ -154,42 +181,6 @@ namespace Absalyamov_WEB2.Controllers
             _Relationship.Passing = rnd.Next(q, 100);
             _Relationship.Physical = rnd.Next(q, 100);
             return (_Relationship);
-        }
-
-        private void SetNewUserBalance(int _UserID, int _CardID, int _NewBalance)
-        {
-            var query = from Users in _context.Users where Users.Id == _UserID select Users;
-            foreach (User user in query)
-            {
-                user.Balance = _NewBalance;
-            }
-        }
-
-        private int GetUserID(string name)
-        {
-            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Id;
-            int id = query.FirstOrDefault();
-            return id;
-        }
-
-        private int GetUserBalance(string name)
-        {
-            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Balance;
-            int _Balance = query.FirstOrDefault();
-            return _Balance;
-        }
-
-        private int GetCardPrice(int CardID)
-        {
-            IQueryable<int> query = from PlayerCard in _context.PlayerCards where PlayerCard.Id == CardID select PlayerCard.Price;
-            int _Price = query.FirstOrDefault();
-            return _Price;
-        }
-        private string GetCardQuality(int CardID)
-        {
-            IQueryable<string> query = from PlayerCard in _context.PlayerCards where PlayerCard.Id == CardID select PlayerCard.Quality;
-            string _Quality = query.First();
-            return _Quality;
         }
 
         private bool UserCardRelationshipExists(int id)

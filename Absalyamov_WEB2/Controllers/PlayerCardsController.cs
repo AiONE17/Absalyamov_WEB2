@@ -19,9 +19,9 @@ namespace Absalyamov_WEB2.Controllers
     public class PlayerCardsController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IUserService _playercardservice;
+        private readonly IPlayerCardService _playercardservice;
 
-        public PlayerCardsController(DataContext context, IUserService playercardservice)
+        public PlayerCardsController(DataContext context, IPlayerCardService playercardservice)
         {
             _context = context;
             _playercardservice = playercardservice;
@@ -81,7 +81,7 @@ namespace Absalyamov_WEB2.Controllers
 
         // POST: api/PlayerCards
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin")]
         public async Task<ActionResult<PlayerCard>> PostPlayerCard(PlayerCardDto request)
         {
             PlayerCard playercard = new PlayerCard();
@@ -119,28 +119,28 @@ namespace Absalyamov_WEB2.Controllers
             return NoContent();
         }
 
-        [HttpGet("GetPlayersByCountry")]
+        [HttpGet("GetPlayersByCountry"), Authorize(Roles = "Admin,Noob")]
         public async Task<IActionResult> GetPlayersByCountry(string countryname)
         {
             var players = await _playercardservice._GetPlayersByCountry(countryname);
             return Ok(players);
         }
 
-        [HttpGet("GetPlayersByName")]
+        [HttpGet("GetPlayersByName"), Authorize(Roles = "Admin, Noob")]
         public async Task<IActionResult> GetPlayersByName(string name)
         {
             var players = await _playercardservice._GetPlayersByName(name);
             return Ok(players);
         }
 
-        [HttpGet("GetPlayersBySurname")]
+        [HttpGet("GetPlayersBySurname"), Authorize(Roles = "Admin,Noob")]
         public async Task<IActionResult> GetPlayersBySurname(string surname)
         {
             var players = await _playercardservice._GetPlayersBySurname(surname);
             return Ok(players);
         }
 
-        [HttpGet("GetPlayersByQuality")]
+        [HttpGet("GetPlayersByQuality"), Authorize(Roles = "Admin,Noob")]
         public async Task<IActionResult> GetPlayersByQuality(string quality)
         {
             var players = await _playercardservice._GetPlayersByQuality(quality);

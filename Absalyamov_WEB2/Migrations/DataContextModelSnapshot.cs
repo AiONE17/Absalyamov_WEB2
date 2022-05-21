@@ -49,12 +49,7 @@ namespace Absalyamov_WEB2.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("PlayerCards");
                 });
@@ -101,9 +96,6 @@ namespace Absalyamov_WEB2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CardID")
-                        .HasColumnType("int");
-
                     b.Property<int>("Defending")
                         .HasColumnType("int");
 
@@ -119,6 +111,9 @@ namespace Absalyamov_WEB2.Migrations
                     b.Property<int>("Physical")
                         .HasColumnType("int");
 
+                    b.Property<int>("PlayerCardID")
+                        .HasColumnType("int");
+
                     b.Property<int>("Shooting")
                         .HasColumnType("int");
 
@@ -127,19 +122,30 @@ namespace Absalyamov_WEB2.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PlayerCardID");
+
+                    b.HasIndex("UserID");
+
                     b.ToTable("UserCardRelationships");
                 });
 
-            modelBuilder.Entity("Absalyamov_WEB2.PlayerCard", b =>
+            modelBuilder.Entity("Absalyamov_WEB2.UserCardRelationship", b =>
                 {
-                    b.HasOne("Absalyamov_WEB2.User", null)
-                        .WithMany("PlayerCards")
-                        .HasForeignKey("UserId");
-                });
+                    b.HasOne("Absalyamov_WEB2.PlayerCard", "PlayerCard")
+                        .WithMany()
+                        .HasForeignKey("PlayerCardID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("Absalyamov_WEB2.User", b =>
-                {
-                    b.Navigation("PlayerCards");
+                    b.HasOne("Absalyamov_WEB2.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerCard");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

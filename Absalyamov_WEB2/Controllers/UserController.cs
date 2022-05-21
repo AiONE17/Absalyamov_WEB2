@@ -97,7 +97,7 @@ namespace Absalyamov_WEB2.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
-        [HttpPut("RegisterToTierList"), Authorize(Roles = "Noob")]
+        [HttpPut("RegisterToTierList"), Authorize(Roles = "Noob,Admin")]
         public async Task<IActionResult> RegisterToTierList()
         {
             int id = GetUserID(User.Identity.Name);    
@@ -107,13 +107,25 @@ namespace Absalyamov_WEB2.Controllers
                 user.RegisteredToTierList = true;
             }
             await _context.SaveChangesAsync();
-            return Ok(await _context.Users.ToListAsync());
+            return Ok("Successfull");
+        }
+        [HttpGet("ShowBalance"), Authorize(Roles = "Noob")]
+        public async Task<ActionResult<string>> CheckMyBalance()
+        {
+            int _UserBalance = GetUserBalance(User.Identity.Name);
+            return Ok(_UserBalance);
         }
         private int GetUserID(string name)
         {
             IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Id;
             int id = query.FirstOrDefault();
             return id;
+        }
+        private int GetUserBalance(string name)
+        {
+            IQueryable<int> query = from Users in _context.Users where Users.Username == name select Users.Balance;
+            int _Balance = query.FirstOrDefault();
+            return _Balance;
         }
     }
 }
